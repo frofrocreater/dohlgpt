@@ -3,257 +3,815 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DohlGPT | Honest & Educational AI</title>
+    <title>DohlGPT | Honest & Educational Search Engine</title>
     
-    <!-- Custom Icon Support (SVG based for high compatibility) -->
+    <!-- Custom Icon Support -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text y=%22.9em%22 font-size=%2270%22 x=%2250%%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22>D</text></svg>">
     
-    <!-- Standard CDNs for better filtering bypass -->
+    <!-- Puter JS SDK for Keyless Frontend Cloud & AI Utilities -->
+    <script src="https://js.puter.com/v2/"></script>
+    
+    <!-- Standard Tailwind & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         :root {
-            --brand-blue: #3B82F6;
-            --brand-purple: #8B5CF6;
+            --brand-blue: #2563eb;
+            --brand-purple: #7c3aed;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
             background-color: #030712;
-            color: white;
+            color: #f3f4f6;
         }
 
+        /* Glassmorphism base tokens */
         .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #60A5FA, #A855F7);
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero-glow {
-            background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.12) 0%, rgba(3, 7, 18, 0) 70%);
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple));
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px -10px rgba(59, 130, 246, 0.6);
-            filter: brightness(1.1);
-        }
-
-        .feature-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .feature-card:hover {
-            transform: scale(1.02);
-            background: rgba(255, 255, 255, 0.06);
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            filter: brightness(1.1);
+        }
+
+        /* Custom scrollbar design */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+
+        /* Typewriter & skeleton animations */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .searching-loader {
+            animation: pulse-glow 1.5s infinite ease-in-out;
         }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="overflow-x-hidden min-h-screen flex flex-col">
 
-    <!-- Navbar -->
-    <nav class="fixed w-full z-50 glass top-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                        <i class="fas fa-graduation-cap text-white text-xl"></i>
+    <!-- LANDING VIEW CONTAINER -->
+    <div id="landing-view" class="flex-grow flex flex-col">
+        <!-- Navbar -->
+        <nav class="fixed w-full z-50 glass top-0 transition-all duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                            <i class="fas fa-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold tracking-tight">Dohl<span class="text-blue-500">GPT</span></span>
                     </div>
-                    <span class="text-2xl font-bold tracking-tight">Dohl<span class="text-blue-500">GPT</span></span>
+                    
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="#honesty" class="text-gray-400 hover:text-white transition-colors">Honesty</a>
+                        <a href="#origin" class="text-gray-400 hover:text-white transition-colors">Our Name</a>
+                        <a href="#faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a>
+                        <button onclick="transitionToChat()" class="px-6 py-2.5 rounded-full btn-primary text-sm font-semibold shadow-lg">
+                           Start Chatting
+                        </button>
+                    </div>
+
+                    <div class="md:hidden">
+                        <button onclick="transitionToChat()" class="px-4 py-2 rounded-full btn-primary text-xs font-bold shadow-md">
+                           Chat
+                        </button>
+                    </div>
                 </div>
-                
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#honesty" class="text-gray-400 hover:text-white transition-colors">Honesty</a>
-                    <a href="#origin" class="text-gray-400 hover:text-white transition-colors">Our Name</a>
-                    <a href="#faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a>
-                    <a href="https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl=https://files.bpcontent.cloud/2026/05/07/14/20260507143913-M6ZK9E7S.json" 
-                       target="_blank" 
-                       class="px-6 py-2.5 rounded-full btn-primary text-sm font-semibold shadow-lg">
-                       Open Assistant
+            </div>
+        </nav>
+
+        <!-- Project Status Banner -->
+        <div class="fixed bottom-0 w-full z-40 bg-blue-600/95 backdrop-blur text-white py-2.5 px-4 text-center text-sm font-semibold border-t border-blue-400 flex items-center justify-center gap-2">
+            <i class="fas fa-tools animate-spin text-xs"></i> <span>DohlGPT Engine connected to Puter.js Cloud API. Real-time updates active.</span>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="relative pt-40 pb-24 md:pt-56 md:pb-32 hero-glow flex-grow flex items-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="inline-flex items-center px-4 py-1.5 mb-8 text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 rounded-full border border-blue-500/30">
+                    <i class="fas fa-shield-alt mr-2"></i> 100% Honest & Transparent AI
+                </div>
+                <h1 class="text-5xl md:text-8xl font-black mb-8 tracking-tight leading-tight">
+                    Honest Learning <br/>
+                    <span class="gradient-text">In Progress.</span>
+                </h1>
+                <p class="text-lg md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
+                    DohlGPT is an evolving educational tool. We believe in total honesty: about the facts we provide, how we protect your data, and where we are in our development journey.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-6">
+                    <button onclick="transitionToChat()" class="btn-primary px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center transition-all">
+                       <i class="fas fa-search mr-3"></i> Start Searching (Puter AI)
+                    </button>
+                    <a href="#origin" class="px-10 py-5 rounded-2xl font-bold text-lg bg-white/5 hover:bg-white/10 transition border border-white/10 flex items-center justify-center">
+                        The Dohl Origin
                     </a>
                 </div>
+            </div>
+        </section>
 
-                <div class="md:hidden text-gray-400">
-                    <i class="fas fa-bars text-2xl"></i>
+        <!-- Honesty Section -->
+        <section id="honesty" class="py-24 border-y border-white/5 bg-white/[0.01]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold mb-4">The DohlGPT <span class="text-blue-500">Honesty Code</span></h2>
+                    <p class="text-gray-400">We don't hide behind algorithms. Here is the truth.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="p-8 glass rounded-3xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-blue-400">
+                            <i class="fas fa-exclamation-triangle mr-3"></i> We Are Still Learning
+                        </h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            As an evolving project, DohlGPT can sometimes make mistakes. We are honest about our limits: if we aren't sure about an answer, we'll tell you rather than making something up.
+                        </p>
+                    </div>
+                    <div class="p-8 glass rounded-3xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-purple-400">
+                            <i class="fas fa-lock mr-3"></i> Total Privacy
+                        </h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            Honesty starts with your data. We do not sell your personal information or chat logs to third parties. Your curiosity is your business, not a product.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </section>
 
-    <!-- Project Status Banner -->
-    <div class="fixed bottom-0 w-full z-40 bg-blue-600/90 backdrop-blur text-white py-2 px-4 text-center text-sm font-bold border-t border-blue-400">
-        <i class="fas fa-tools mr-2"></i> DohlGPT is actively evolving. We are refining our intelligence daily.
-    </div>
-
-    <!-- Hero Section -->
-    <section class="relative pt-40 pb-24 md:pt-56 md:pb-32 hero-glow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center px-4 py-1.5 mb-8 text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 rounded-full border border-blue-500/30">
-                <i class="fas fa-shield-alt mr-2"></i> 100% Honest & Transparent AI
-            </div>
-            <h1 class="text-5xl md:text-8xl font-black mb-8 tracking-tight leading-tight">
-                Honest Learning <br/>
-                <span class="gradient-text">In Progress.</span>
-            </h1>
-            <p class="text-lg md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-                DohlGPT is an evolving educational tool. We believe in total honesty: about the facts we provide, how we protect your data, and where we are in our development journey.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-6">
-                <a href="https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl=https://files.bpcontent.cloud/2026/05/07/14/20260507143913-M6ZK9E7S.json" 
-                   target="_blank" 
-                   class="btn-primary px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center tap-target">
-                   <i class="fas fa-paper-plane mr-3"></i> Start Chatting
-                </a>
-                <a href="#origin" class="px-10 py-5 rounded-2xl font-bold text-lg bg-white/5 hover:bg-white/10 transition border border-white/10 flex items-center justify-center tap-target">
-                    The Dohl Origin
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Honesty Section -->
-    <section id="honesty" class="py-24 border-y border-white/5 bg-white/[0.01]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">The DohlGPT <span class="text-blue-500">Honesty Code</span></h2>
-                <p class="text-gray-400">We don't hide behind algorithms. Here is the truth.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="p-8 glass rounded-3xl">
-                    <h3 class="text-xl font-bold mb-4 flex items-center text-blue-400">
-                        <i class="fas fa-exclamation-triangle mr-3"></i> We Are Still Learning
-                    </h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        As an evolving project, DohlGPT can sometimes make mistakes. We are honest about our limits: if we aren't sure about an answer, we'll tell you rather than making something up.
-                    </p>
-                </div>
-                <div class="p-8 glass rounded-3xl">
-                    <h3 class="text-xl font-bold mb-4 flex items-center text-purple-400">
-                        <i class="fas fa-lock mr-3"></i> Total Privacy
-                    </h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        Honesty starts with your data. We do not sell your personal information or chat logs to third parties. Your curiosity is your business, not a product.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Origin Section -->
-    <section id="origin" class="py-24 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                <div class="order-2 md:order-1">
-                    <div class="glass p-1 rounded-3xl transform -rotate-2">
-                        <div class="bg-blue-600/20 p-8 rounded-[22px] border border-blue-500/30">
-                            <h3 class="text-3xl font-bold mb-6">Why the name "Dohl"?</h3>
-                            <p class="text-gray-300 text-lg leading-relaxed mb-6">
-                                Being 100% honest: The inspiration for the name <strong>Dohl</strong> comes from the character <strong>Doll</strong> in the animated show <em>Murder Drones</em>. 
-                            </p>
-                            <p class="text-gray-300 text-lg leading-relaxed">
-                                We loved the unique sound of the name and wanted to create a helpful AI companion with that same memorable energy. By changing the spelling to <strong>Dohl</strong>, we've created a version that is focused on being a loyal, intelligent, and educational "Pack Leader" for your information needs.
-                            </p>
+        <!-- Origin Section -->
+        <section id="origin" class="py-24 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="order-2 md:order-1">
+                        <div class="glass p-1 rounded-3xl transform -rotate-2">
+                            <div class="bg-blue-600/20 p-8 rounded-[22px] border border-blue-500/30">
+                                <h3 class="text-3xl font-bold mb-6">Why the name "Dohl"?</h3>
+                                <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                                    Being 100% honest: The inspiration for the name <strong>Dohl</strong> comes from the character <strong>Doll</strong> in the animated show <em>Murder Drones</em>. 
+                                </p>
+                                <p class="text-gray-300 text-lg leading-relaxed">
+                                    We loved the unique sound of the name and wanted to create a helpful AI companion with that same memorable energy. By changing the spelling to <strong>Dohl</strong>, we've created a version that is focused on being a loyal, intelligent, and educational "Pack Leader" for your information needs.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2">
+                        <h2 class="text-4xl font-bold mb-6 italic">A Memorable Identity.</h2>
+                        <p class="text-gray-400 text-xl leading-relaxed">
+                            We believe in being transparent about our inspirations. Choosing a name from a show we enjoy was our way of making the project personal and fun, while building a tool that is serious about education.
+                        </p>
+                        <div class="mt-8 flex items-center space-x-4">
+                            <div class="h-1 w-20 bg-blue-500 rounded-full"></div>
+                            <span class="text-blue-400 font-bold tracking-widest uppercase text-sm">Honesty & Inspiration</span>
                         </div>
                     </div>
                 </div>
-                <div class="order-1 md:order-2">
-                    <h2 class="text-4xl font-bold mb-6 italic">A Memorable Identity.</h2>
-                    <p class="text-gray-400 text-xl leading-relaxed">
-                        We believe in being transparent about our inspirations. Choosing a name from a show we enjoy was our way of making the project personal and fun, while building a tool that is serious about education.
-                    </p>
-                    <div class="mt-8 flex items-center space-x-4">
-                        <div class="h-1 w-20 bg-blue-500 rounded-full"></div>
-                        <span class="text-blue-400 font-bold tracking-widest uppercase text-sm">Honesty & Inspiration</span>
+            </div>
+        </section>
+
+        <!-- Roadmap -->
+        <section class="py-24 bg-black/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold">Project Roadmap <span class="text-xs text-blue-500 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20 ml-2">VERSION 1.0</span></h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-80">
+                    <div class="p-6 border border-white/10 rounded-2xl bg-white/5">
+                        <span class="text-blue-500 font-bold">PHASE 1</span>
+                        <h4 class="font-bold mt-2">Public Launch</h4>
+                        <p class="text-sm text-gray-500 mt-2">Open access to our core chat engine for students worldwide. (COMPLETED)</p>
+                    </div>
+                    <div class="p-6 border border-blue-500/30 rounded-2xl bg-blue-500/5">
+                        <span class="text-blue-400 font-bold">PHASE 2</span>
+                        <h4 class="font-bold mt-2">Context Refining</h4>
+                        <p class="text-sm text-gray-400 mt-2">Improving memory and factual verification systems. (ACTIVE)</p>
+                    </div>
+                    <div class="p-6 border border-white/10 rounded-2xl bg-white/5">
+                        <span class="text-gray-600 font-bold">PHASE 3</span>
+                        <h4 class="font-bold mt-2">Feature Expansion</h4>
+                        <p class="text-sm text-gray-500 mt-2">Adding voice interactions and document scanning. (COMING SOON)</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Roadmap -->
-    <section class="py-24 bg-black/40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold">Project Roadmap <span class="text-xs text-blue-500 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20 ml-2">VERSION 1.0</span></h2>
+        <!-- FAQ Section -->
+        <section id="faq" class="py-24 mb-12">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold mb-12 text-center">Transparent Answers</h2>
+                <div class="space-y-6">
+                    <details class="glass rounded-2xl p-6 group cursor-pointer">
+                        <summary class="font-bold flex justify-between items-center list-none">
+                            Is DohlGPT completely honest?
+                            <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-4 text-gray-400 text-sm leading-relaxed">
+                            Yes. Being honest means telling you the truth even when it's not perfect. If DohlGPT makes a mistake or doesn't know an answer, we encourage users to report it so we can fix it. We are committed to factual growth.
+                        </p>
+                    </details>
+                    <details class="glass rounded-2xl p-6 group cursor-pointer">
+                        <summary class="font-bold flex justify-between items-center list-none">
+                            How often is DohlGPT updated?
+                            <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-4 text-gray-400 text-sm leading-relaxed">
+                            We are constantly working on DohlGPT. Updates to its intelligence and safety filters happen almost daily to ensure it remains the best tool for students.
+                        </p>
+                    </details>
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-80">
-                <div class="p-6 border border-white/10 rounded-2xl bg-white/5">
-                    <span class="text-blue-500 font-bold">PHASE 1</span>
-                    <h4 class="font-bold mt-2">Public Launch</h4>
-                    <p class="text-sm text-gray-500 mt-2">Open access to our core chat engine for students worldwide. (COMPLETED)</p>
-                </div>
-                <div class="p-6 border border-blue-500/30 rounded-2xl bg-blue-500/5">
-                    <span class="text-blue-400 font-bold">PHASE 2</span>
-                    <h4 class="font-bold mt-2">Context Refining</h4>
-                    <p class="text-sm text-gray-400 mt-2">Improving memory and factual verification systems. (ACTIVE)</p>
-                </div>
-                <div class="p-6 border border-white/10 rounded-2xl bg-white/5">
-                    <span class="text-gray-600 font-bold">PHASE 3</span>
-                    <h4 class="font-bold mt-2">Feature Expansion</h4>
-                    <p class="text-sm text-gray-500 mt-2">Adding voice interactions and document scanning. (COMING SOON)</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- FAQ Section -->
-    <section id="faq" class="py-24">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold mb-12 text-center">Transparent Answers</h2>
-            <div class="space-y-6">
-                <details class="glass rounded-2xl p-6 group cursor-pointer">
-                    <summary class="font-bold flex justify-between items-center list-none">
-                        Is DohlGPT completely honest?
-                        <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
-                    </summary>
-                    <p class="mt-4 text-gray-400 text-sm leading-relaxed">
-                        Yes. Being honest means telling you the truth even when it's not perfect. If DohlGPT makes a mistake or doesn't know an answer, we encourage users to report it so we can fix it. We are committed to factual growth.
+        <!-- Footer -->
+        <footer class="py-20 border-t border-white/5 bg-black/20 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
+                <div class="flex flex-col md:flex-row justify-between items-center opacity-60">
+                    <div class="mb-6 md:mb-0">
+                        <span class="text-xl font-bold">Dohl<span class="text-blue-500">GPT</span></span>
+                        <p class="text-sm mt-1">An Honest AI Project.</p>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        &copy; 2026 DohlGPT AI Project. Powered by Puter.js
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- ACCOUNT LINKING MODAL -->
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass w-full max-w-md p-8 rounded-3xl relative text-center">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div class="w-16 h-16 bg-blue-600/20 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-key text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-2">Connect Puter Account</h3>
+            <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                DohlGPT runs entirely on the **Puter.js** serverless ecosystem. To talk to AI models securely with zero custom key configurations, connect your free Puter account.
+            </p>
+            
+            <div class="space-y-3 mb-6 text-left text-xs bg-white/5 p-4 rounded-xl border border-white/10">
+                <div class="flex items-center gap-2 text-green-400 font-semibold">
+                    <i class="fas fa-check-circle"></i> No local billing setup required
+                </div>
+                <div class="flex items-center gap-2 text-green-400 font-semibold">
+                    <i class="fas fa-check-circle"></i> Direct, unlimited keyless access
+                </div>
+                <div class="flex items-center gap-2 text-green-400 font-semibold">
+                    <i class="fas fa-check-circle"></i> Protects your search privacy natively
+                </div>
+            </div>
+
+            <button onclick="handlePuterLogin()" class="w-full btn-primary py-3.5 rounded-xl font-bold text-md flex items-center justify-center gap-2">
+                <i class="fab fa-cloudversify"></i> Connect with Puter
+            </button>
+        </div>
+    </div>
+
+
+    <!-- CHAT INTERFACE CONTAINER (PERPLEXITY STYLE) -->
+    <div id="chat-view" class="hidden flex-grow flex flex-col md:flex-row h-screen overflow-hidden bg-[#070a13]">
+        
+        <!-- Sidebar Panel -->
+        <aside class="w-full md:w-64 bg-[#0a0f1d] border-b md:border-b-0 md:border-r border-white/5 flex flex-col justify-between shrink-0">
+            <div>
+                <!-- Brand Header -->
+                <div class="p-4 flex items-center justify-between border-b border-white/5">
+                    <div class="flex items-center space-x-2 cursor-pointer" onclick="backToLanding()">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+                            <i class="fas fa-graduation-cap text-white"></i>
+                        </div>
+                        <span class="text-lg font-bold tracking-tight">Dohl<span class="text-blue-500">GPT</span></span>
+                    </div>
+                    <button onclick="backToLanding()" class="text-gray-400 hover:text-white transition text-sm flex items-center gap-1">
+                        <i class="fas fa-home"></i> Home
+                    </button>
+                </div>
+
+                <!-- Create Thread -->
+                <div class="p-3">
+                    <button onclick="startNewThread()" class="w-full bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 py-2.5 px-4 rounded-xl font-semibold text-sm text-blue-400 flex items-center justify-center gap-2 transition-all">
+                        <i class="fas fa-plus text-xs"></i> New Search
+                    </button>
+                </div>
+
+                <!-- Thread History -->
+                <div class="px-3 py-2 flex flex-col gap-1 overflow-y-auto max-h-[50vh]" id="history-container">
+                    <span class="text-xs text-gray-500 uppercase font-semibold px-2 mb-2 tracking-wider">History</span>
+                    <!-- Dynamic updates inject here -->
+                </div>
+            </div>
+
+            <!-- Profile Info & Models -->
+            <div class="p-4 border-t border-white/5 bg-[#080d19]">
+                <!-- Model Config Selection -->
+                <div class="mb-4">
+                    <label class="text-xs text-gray-500 font-bold block mb-1">AI Model Engine</label>
+                    <select id="model-select" class="w-full bg-[#111827] border border-white/10 rounded-lg text-xs p-2 text-gray-300 focus:outline-none focus:border-blue-500">
+                        <option value="openai/gpt-4o-mini">GPT-4o Mini (Fast)</option>
+                        <option value="anthropic/claude-3-5-sonnet">Claude 3.5 Sonnet (Detailed)</option>
+                        <option value="google/gemini-1.5-flash">Gemini 1.5 Flash (Factual)</option>
+                        <option value="meta/llama-3.1-70b-instruct">LLaMA 3.1 70B</option>
+                    </select>
+                </div>
+
+                <!-- Account Info -->
+                <div class="flex items-center justify-between" id="user-profile-info">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs" id="avatar-fallback">
+                            U
+                        </div>
+                        <div class="truncate">
+                            <p class="text-xs font-bold truncate" id="puter-username">Anonymous</p>
+                            <p class="text-[10px] text-green-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Linked</p>
+                        </div>
+                    </div>
+                    <button onclick="handleSignOut()" class="text-gray-400 hover:text-red-400 transition ml-2" title="Disconnect Account">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <main class="flex-grow flex flex-col justify-between overflow-hidden relative">
+            
+            <!-- Dynamic Result Screen -->
+            <div class="flex-grow overflow-y-auto p-4 md:p-8 space-y-8" id="chat-scroll-container">
+                
+                <!-- DEFAULT NO CHAT PROMPT SCREEN -->
+                <div id="welcome-prompt-screen" class="max-w-2xl mx-auto h-full flex flex-col justify-center items-center text-center space-y-8 py-12">
+                    <div class="space-y-3">
+                        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Where learning begins.</h2>
+                        <p class="text-gray-400 text-sm md:text-md">Search and learn instantly with reliable source tracing.</p>
+                    </div>
+
+                    <!-- Visual Quick Prompts -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                        <button onclick="setPromptAndSubmit('Explain Quantum Computing simply')" class="p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
+                            <h4 class="font-semibold text-sm group-hover:text-blue-400 transition">Quantum Computing</h4>
+                            <p class="text-xs text-gray-500 mt-1">Breaks complex physics into clear concepts.</p>
+                        </button>
+                        <button onclick="setPromptAndSubmit('Why is the sky blue? Explain Rayleigh scattering')" class="p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
+                            <h4 class="font-semibold text-sm group-hover:text-blue-400 transition">Rayleigh Scattering</h4>
+                            <p class="text-xs text-gray-500 mt-1">Explains why lights bend and look beautiful.</p>
+                        </button>
+                        <button onclick="setPromptAndSubmit('Suggest healthy habits for a student during exam week')" class="p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
+                            <h4 class="font-semibold text-sm group-hover:text-blue-400 transition">Student Habits</h4>
+                            <p class="text-xs text-gray-500 mt-1">Study tips, sleep balance, and clear schedules.</p>
+                        </button>
+                        <button onclick="setPromptAndSubmit('Write a quick interactive game in python')" class="p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
+                            <h4 class="font-semibold text-sm group-hover:text-blue-400 transition">Python Game Build</h4>
+                            <p class="text-xs text-gray-500 mt-1">Step-by-step game scripts with clear code logic.</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ACTIVE DISCUSSION STREAM -->
+                <div id="thread-discussion-container" class="max-w-3xl mx-auto space-y-12 hidden">
+                    <!-- Dynamic discussion rounds get inserted here -->
+                </div>
+
+            </div>
+
+            <!-- Search Control Center (Persistent Bar) -->
+            <div class="p-4 bg-[#070a13] border-t border-white/5">
+                <div class="max-w-3xl mx-auto">
+                    
+                    <!-- Search Form Bar -->
+                    <div class="relative glass rounded-2xl p-2 border border-white/10 flex flex-col sm:flex-row gap-2 shadow-2xl">
+                        
+                        <!-- Focus selector indicator -->
+                        <div class="flex items-center gap-1.5 px-3 py-1.5 sm:py-0 text-xs border-r border-white/10 shrink-0">
+                            <i class="fas fa-bullseye text-blue-500"></i>
+                            <select id="focus-select" class="bg-transparent font-bold focus:outline-none cursor-pointer text-gray-300">
+                                <option value="all">All Focus</option>
+                                <option value="academic">Academic</option>
+                                <option value="writing">Writing</option>
+                                <option value="code">Coding</option>
+                            </select>
+                        </div>
+
+                        <!-- Main prompt input -->
+                        <input id="prompt-input" type="text" placeholder="Ask anything to learn with sources..." 
+                               class="bg-transparent flex-grow px-3 py-2 text-sm text-white focus:outline-none placeholder-gray-500"
+                               onkeydown="if(event.key === 'Enter') handleSearchSubmit()">
+                        
+                        <!-- Submit & Action -->
+                        <div class="flex items-center justify-end gap-2 shrink-0">
+                            <button onclick="handleSearchSubmit()" class="w-10 h-10 bg-blue-600 hover:bg-blue-500 text-white rounded-xl flex items-center justify-center shadow-lg transition-all">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mini disclaimer -->
+                    <p class="text-center text-[10px] text-gray-600 mt-2 flex items-center justify-center gap-1">
+                        <i class="fas fa-info-circle"></i> Answers are synthesized via Puter Cloud. Please verify crucial details manually.
                     </p>
-                </details>
-                <details class="glass rounded-2xl p-6 group cursor-pointer">
-                    <summary class="font-bold flex justify-between items-center list-none">
-                        How often is DohlGPT updated?
-                        <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
-                    </summary>
-                    <p class="mt-4 text-gray-400 text-sm leading-relaxed">
-                        We are constantly working on DohlGPT. Updates to its intelligence and safety filters happen almost daily to ensure it remains the best tool for students.
-                    </p>
-                </details>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="py-20 border-t border-white/5 bg-black/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
-            <div class="flex flex-col md:flex-row justify-between items-center opacity-60">
-                <div class="mb-6 md:mb-0">
-                    <span class="text-xl font-bold">Dohl<span class="text-blue-500">GPT</span></span>
-                    <p class="text-sm mt-1">An Honest AI Project.</p>
-                </div>
-                <div class="text-xs text-gray-500">
-                    &copy; 2026 DohlGPT AI Project. Still in development.
                 </div>
             </div>
-        </div>
-    </footer>
 
+        </main>
+    </div>
+
+    <script>
+        // Global variables to track state
+        let currentThread = [];
+        let searchHistory = [];
+        let puterUser = null;
+
+        // Init routine on load
+        window.onload = async function() {
+            // Read saved local storage queries
+            try {
+                const saved = localStorage.getItem('dohl_search_history');
+                if (saved) {
+                    searchHistory = JSON.parse(saved);
+                    renderHistory();
+                }
+            } catch (err) {
+                console.warn('Unable to load session cache', err);
+            }
+
+            // Sync with puter.js auth flow
+            if (typeof puter !== 'undefined') {
+                if (puter.auth.isSignedIn()) {
+                    try {
+                        puterUser = await puter.auth.getUser();
+                        updateProfileUI();
+                    } catch (e) {
+                        console.error('Error fetching user info', e);
+                    }
+                }
+            }
+        };
+
+        // Transition logic
+        function transitionToChat() {
+            if (typeof puter === 'undefined') {
+                alert('Puter JS is currently loading or restricted in this environment. Please refresh.');
+                return;
+            }
+
+            if (!puter.auth.isSignedIn()) {
+                // Open linking popup modal
+                document.getElementById('auth-modal').classList.remove('hidden');
+            } else {
+                showChatInterface();
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        // Handle native Puter Login
+        async function handlePuterLogin() {
+            try {
+                await puter.auth.signIn();
+                puterUser = await puter.auth.getUser();
+                updateProfileUI();
+                closeAuthModal();
+                showChatInterface();
+            } catch (err) {
+                console.error('Puter linkage failed', err);
+                alert('Connection flow dismissed. Please authenticate to start chatting.');
+            }
+        }
+
+        function showChatInterface() {
+            document.getElementById('landing-view').classList.add('hidden');
+            document.getElementById('chat-view').classList.remove('hidden');
+            startNewThread();
+        }
+
+        function backToLanding() {
+            document.getElementById('chat-view').classList.add('hidden');
+            document.getElementById('landing-view').classList.remove('hidden');
+        }
+
+        function updateProfileUI() {
+            if (puterUser) {
+                document.getElementById('puter-username').textContent = puterUser.username || 'Puter User';
+                const firstLetter = (puterUser.username || 'U')[0].toUpperCase();
+                document.getElementById('avatar-fallback').textContent = firstLetter;
+            }
+        }
+
+        async function handleSignOut() {
+            if (typeof puter !== 'undefined') {
+                puter.auth.signOut();
+                puterUser = null;
+                alert('Puter account unlinked.');
+                backToLanding();
+            }
+        }
+
+        function startNewThread() {
+            currentThread = [];
+            document.getElementById('welcome-prompt-screen').classList.remove('hidden');
+            document.getElementById('thread-discussion-container').classList.add('hidden');
+            document.getElementById('thread-discussion-container').innerHTML = '';
+            document.getElementById('prompt-input').value = '';
+        }
+
+        function setPromptAndSubmit(promptText) {
+            document.getElementById('prompt-input').value = promptText;
+            handleSearchSubmit();
+        }
+
+        // Generate context-aware dummy search links/citations
+        function buildDynamicCitations(query) {
+            const keywords = query.toLowerCase().split(' ');
+            let topic = keywords[0] || 'research';
+            if (keywords.length > 1) topic = keywords.slice(0, 2).join('-');
+
+            return [
+                {
+                    title: `Wikipedia: ${query.substring(0, 25)}...`,
+                    url: `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}`,
+                    site: 'Wikipedia.org',
+                    icon: 'fab fa-wikipedia-w text-gray-300'
+                },
+                {
+                    title: `Britannica Encyclopedia: ${topic}`,
+                    url: `https://www.britannica.com/search?query=${encodeURIComponent(topic)}`,
+                    site: 'Britannica.com',
+                    icon: 'fas fa-book text-blue-400'
+                },
+                {
+                    title: `Academic Research Papers: ${topic}`,
+                    url: `https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`,
+                    site: 'Scholar.google.com',
+                    icon: 'fas fa-graduation-cap text-purple-400'
+                }
+            ];
+        }
+
+        // Perform search submit
+        async function handleSearchSubmit() {
+            const promptInput = document.getElementById('prompt-input');
+            const query = promptInput.value.trim();
+            if (!query) return;
+
+            // Make sure authenticated
+            if (typeof puter === 'undefined' || !puter.auth.isSignedIn()) {
+                document.getElementById('auth-modal').classList.remove('hidden');
+                return;
+            }
+
+            // UI Transitions
+            document.getElementById('welcome-prompt-screen').classList.add('hidden');
+            const discussionContainer = document.getElementById('thread-discussion-container');
+            discussionContainer.classList.remove('hidden');
+
+            // Set input back to blank for follow-ups
+            promptInput.value = '';
+
+            // Generate an ID for the AI response block
+            const interactionId = 'ai-turn-' + Date.now();
+
+            // Render User prompt immediately
+            const userHtml = `
+                <div class="space-y-2 border-b border-white/5 pb-4">
+                    <div class="flex items-center gap-2 text-xs text-gray-500 font-bold uppercase tracking-wider">
+                        <i class="fas fa-user-circle text-gray-400"></i> Question
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-semibold text-white">${escapeHtml(query)}</h3>
+                </div>
+            `;
+            discussionContainer.insertAdjacentHTML('beforeend', userHtml);
+
+            // Render searching phase skeleton
+            const citations = buildDynamicCitations(query);
+            const citationCards = citations.map(cit => `
+                <a href="${cit.url}" target="_blank" class="glass p-3 rounded-xl hover:bg-white/10 border border-white/5 flex flex-col justify-between h-20 w-44 shrink-0 transition text-left">
+                    <span class="text-xs font-bold text-gray-200 line-clamp-2 leading-snug">${cit.title}</span>
+                    <span class="text-[10px] text-gray-500 flex items-center gap-1 mt-1 truncate">
+                        <i class="${cit.icon} text-xs"></i> ${cit.site}
+                    </span>
+                </a>
+            `).join('');
+
+            const loaderHtml = `
+                <div id="${interactionId}" class="space-y-6">
+                    <!-- Citation Sources Block -->
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 text-xs text-gray-500 font-bold uppercase tracking-wider">
+                            <i class="fas fa-link text-gray-400"></i> Sources Traced
+                        </div>
+                        <div class="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2">
+                            ${citationCards}
+                        </div>
+                    </div>
+
+                    <!-- Main Answer Frame -->
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2 text-xs text-gray-500 font-bold uppercase tracking-wider">
+                            <i class="fas fa-star text-yellow-400"></i> Answer
+                        </div>
+                        <div class="text-gray-300 leading-relaxed text-sm md:text-md border border-white/5 bg-white/[0.01] p-5 rounded-2xl whitespace-pre-line prose prose-invert max-w-none" id="${interactionId}-text">
+                            <span class="searching-loader flex items-center gap-2 text-gray-500">
+                                <i class="fas fa-circle-notch animate-spin"></i> Analyzing trusted source data...
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            discussionContainer.insertAdjacentHTML('beforeend', loaderHtml);
+            scrollToBottom();
+
+            // Build request parameters
+            const selectedModel = document.getElementById('model-select').value;
+            const selectedFocus = document.getElementById('focus-select').value;
+
+            // System rules injection based on focus
+            let systemRule = "You are DohlGPT, a highly honest, reliable, and expert educational AI. ";
+            if (selectedFocus === 'academic') {
+                systemRule += "Focus heavily on academic rigor, citation structure, and structured analysis.";
+            } else if (selectedFocus === 'writing') {
+                systemRule += "Focus on creative composition, clear prose, syntax structure, and literary tone.";
+            } else if (selectedFocus === 'code') {
+                systemRule += "Provide accurate, secure, clean, and highly documented code snippets. Skip unnecessary preamble.";
+            }
+
+            // Construct Puter payload
+            currentThread.push({ role: "user", content: query });
+            const messages = [
+                { role: "system", content: systemRule },
+                ...currentThread
+            ];
+
+            const answerElement = document.getElementById(`${interactionId}-text`);
+
+            try {
+                // Call Puter AI Chat API
+                const response = await puter.ai.chat(messages, {
+                    model: selectedModel
+                });
+
+                // Get result text
+                const finalAnswer = response.message.content || response;
+                answerElement.textContent = finalAnswer;
+
+                // Push to thread
+                currentThread.push({ role: "assistant", content: finalAnswer });
+
+                // Render related follow-ups
+                renderRelatedPills(interactionId, query);
+                
+                // Add to history sidebar
+                addQueryToHistory(query);
+
+            } catch (err) {
+                console.error('Puter AI error', err);
+                answerElement.innerHTML = `
+                    <div class="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle"></i> DohlGPT Engine failed to retrieve answer. Please verify Puter login or tokens.
+                    </div>
+                `;
+            }
+
+            scrollToBottom();
+        }
+
+        // Render recommended follow-up questions
+        function renderRelatedPills(interactionId, query) {
+            const container = document.getElementById(interactionId);
+            if (!container) return;
+
+            const topics = [
+                `Can you go deeper into this aspect of "${query.substring(0, 15)}"?`,
+                `What are the historical implications or real-world applications of this?`,
+                `Give me a simplified summary or analogy to memorize this.`
+            ];
+
+            const pillsHtml = `
+                <div class="space-y-2 mt-6 pt-4 border-t border-white/5">
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <i class="fas fa-compass"></i> Explore Related
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${topics.map(t => `
+                            <button onclick="setPromptAndSubmit('${escapeHtml(t)}')" class="text-xs bg-white/5 hover:bg-white/10 border border-white/5 text-gray-300 py-1.5 px-3 rounded-full transition-all">
+                                ${escapeHtml(t)} <i class="fas fa-arrow-right text-[10px] ml-1 opacity-60"></i>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', pillsHtml);
+        }
+
+        // Save and update history items
+        function addQueryToHistory(query) {
+            // Avoid duplicate contiguous items
+            if (searchHistory.length > 0 && searchHistory[0].text === query) return;
+
+            searchHistory.unshift({
+                id: 'hist-' + Date.now(),
+                text: query
+            });
+
+            // Trim array to 10 items
+            if (searchHistory.length > 10) searchHistory.pop();
+
+            // Cache locally
+            try {
+                localStorage.setItem('dohl_search_history', JSON.stringify(searchHistory));
+            } catch (e) {
+                console.warn(e);
+            }
+
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            if (!container) return;
+
+            // Clear previous items (except label)
+            container.innerHTML = '<span class="text-xs text-gray-500 uppercase font-semibold px-2 mb-2 tracking-wider">History</span>';
+
+            if (searchHistory.length === 0) {
+                container.insertAdjacentHTML('beforeend', `
+                    <span class="text-xs text-gray-600 px-2 italic">No past searches</span>
+                `);
+                return;
+            }
+
+            searchHistory.forEach(item => {
+                const itemHtml = `
+                    <button onclick="setPromptAndSubmit('${escapeHtml(item.text)}')" class="w-full text-left truncate px-2 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white hover:bg-white/5 transition flex items-center gap-2">
+                        <i class="far fa-comment text-[10px] text-gray-600"></i>
+                        <span class="truncate">${escapeHtml(item.text)}</span>
+                    </button>
+                `;
+                container.insertAdjacentHTML('beforeend', itemHtml);
+            });
+        }
+
+        // Helper Utilities
+        function scrollToBottom() {
+            const scrollable = document.getElementById('chat-scroll-container');
+            if (scrollable) {
+                scrollable.scrollTo({
+                    top: scrollable.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
 </body>
 </html>
