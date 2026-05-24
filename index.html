@@ -83,6 +83,31 @@
         .searching-loader {
             animation: pulse-glow 1.5s infinite ease-in-out;
         }
+
+        /* Visual soundwave animation */
+        .wave-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: 24px;
+        }
+        .wave-bar {
+            width: 3px;
+            height: 100%;
+            background-color: #3b82f6;
+            border-radius: 99px;
+            animation: bounce 0.8s ease-in-out infinite alternate;
+        }
+        .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+
+        @keyframes bounce {
+            0% { height: 4px; }
+            100% { height: 24px; }
+        }
     </style>
 </head>
 <body class="overflow-x-hidden min-h-screen flex flex-col">
@@ -134,7 +159,7 @@
                     <span class="gradient-text">In Progress.</span>
                 </h1>
                 <p class="text-lg md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-                    DohlGPT is an evolving educational tool. We believe in total honesty: about the facts we provide, how we protect your data, and where we are in our development journey.
+                    DohlGPT is an evolving educational tool. We believe in total honesty: about the facts we provide, how we protect your data, and where we are in our development journey. Now equipped with advanced voice intelligence!
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-6">
                     <button onclick="transitionToChat()" class="btn-primary px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center transition-all">
@@ -337,27 +362,43 @@
                 </div>
 
                 <!-- Thread History -->
-                <div class="px-3 py-2 flex flex-col gap-1 overflow-y-auto max-h-[50vh]" id="history-container">
+                <div class="px-3 py-2 flex flex-col gap-1 overflow-y-auto max-h-[40vh]" id="history-container">
                     <span class="text-xs text-gray-500 uppercase font-semibold px-2 mb-2 tracking-wider">History</span>
                     <!-- Dynamic updates inject here -->
                 </div>
             </div>
 
             <!-- Profile Info & Models -->
-            <div class="p-4 border-t border-white/5 bg-[#080d19]">
+            <div class="p-4 border-t border-white/5 bg-[#080d19] space-y-4">
+                <!-- Voice Speaker Settings -->
+                <div>
+                    <label class="text-[10px] text-gray-500 font-bold block mb-1 uppercase tracking-wider">
+                        <i class="fas fa-volume-up text-blue-500 mr-1"></i> Dohl Voice Persona
+                    </label>
+                    <select id="voice-select" class="w-full bg-[#111827] border border-white/10 rounded-lg text-xs p-2 text-gray-300 focus:outline-none focus:border-blue-500 cursor-pointer">
+                        <option value="Zephyr">Zephyr (Bright & Lively)</option>
+                        <option value="Puck">Puck (Upbeat & Friendly)</option>
+                        <option value="Charon">Charon (Professional & Clear)</option>
+                        <option value="Kore">Kore (Firm & Authoritative)</option>
+                        <option value="Fenrir">Fenrir (Excitable & Rapid)</option>
+                    </select>
+                </div>
+
                 <!-- Model Config Selection -->
-                <div class="mb-4">
-                    <label class="text-xs text-gray-500 font-bold block mb-1">AI Model Engine</label>
+                <div>
+                    <label class="text-[10px] text-gray-500 font-bold block mb-1 uppercase tracking-wider">
+                        <i class="fas fa-microchip text-purple-500 mr-1"></i> GPT Model Engine
+                    </label>
                     <select id="model-select" class="w-full bg-[#111827] border border-white/10 rounded-lg text-xs p-2 text-gray-300 focus:outline-none focus:border-blue-500">
-                        <option value="openai/gpt-4o-mini">GPT-4o Mini (Fast)</option>
-                        <option value="anthropic/claude-3-5-sonnet">Claude 3.5 Sonnet (Detailed)</option>
-                        <option value="google/gemini-1.5-flash">Gemini 1.5 Flash (Factual)</option>
-                        <option value="meta/llama-3.1-70b-instruct">LLaMA 3.1 70B</option>
+                        <option value="openai/gpt-4o-mini">Dohl Core (GPT-4o Mini)</option>
+                        <option value="openai/gpt-4o">Dohl Analytical (GPT-4o)</option>
+                        <option value="openai/o1-mini">Dohl Logic (o1-mini)</option>
+                        <option value="openai/o3-mini">Dohl Specialist (o3-mini)</option>
                     </select>
                 </div>
 
                 <!-- Account Info -->
-                <div class="flex items-center justify-between" id="user-profile-info">
+                <div class="flex items-center justify-between pt-2 border-t border-white/5" id="user-profile-info">
                     <div class="flex items-center gap-2 overflow-hidden">
                         <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs" id="avatar-fallback">
                             U
@@ -384,7 +425,7 @@
                 <div id="welcome-prompt-screen" class="max-w-2xl mx-auto h-full flex flex-col justify-center items-center text-center space-y-8 py-12">
                     <div class="space-y-3">
                         <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Where learning begins.</h2>
-                        <p class="text-gray-400 text-sm md:text-md">Search and learn instantly with reliable source tracing.</p>
+                        <p class="text-gray-400 text-sm md:text-md">Search and learn instantly with reliable source tracing and voice support.</p>
                     </div>
 
                     <!-- Visual Quick Prompts -->
@@ -415,6 +456,22 @@
 
             </div>
 
+            <!-- Voice Dictation Status banner overlay -->
+            <div id="voice-dictation-overlay" class="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-30 hidden w-72 p-4 glass rounded-2xl border border-blue-500/30 flex flex-col items-center justify-center space-y-2 text-center shadow-2xl">
+                <div class="wave-container">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+                <p class="text-sm font-semibold text-blue-400">Dohl is listening to you...</p>
+                <p id="dictation-temp-text" class="text-xs text-gray-400 italic">Speak now</p>
+                <button onclick="cancelSpeechRecognition()" class="px-3 py-1 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-[10px] rounded-lg border border-red-500/30 font-bold uppercase tracking-wider">
+                    Stop
+                </button>
+            </div>
+
             <!-- Search Control Center (Persistent Bar) -->
             <div class="p-4 bg-[#070a13] border-t border-white/5">
                 <div class="max-w-3xl mx-auto">
@@ -438,8 +495,13 @@
                                class="bg-transparent flex-grow px-3 py-2 text-sm text-white focus:outline-none placeholder-gray-500"
                                onkeydown="if(event.key === 'Enter') handleSearchSubmit()">
                         
-                        <!-- Submit & Action -->
-                        <div class="flex items-center justify-end gap-2 shrink-0">
+                        <!-- Submit & Action Buttons -->
+                        <div class="flex items-center justify-end gap-2 shrink-0 px-2">
+                            <!-- Voice Mic Button -->
+                            <button id="mic-btn" onclick="toggleSpeechRecognition()" class="w-10 h-10 hover:bg-white/5 text-gray-400 hover:text-blue-400 rounded-xl flex items-center justify-center transition-all relative" title="Speak to DohlGPT">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+
                             <button onclick="handleSearchSubmit()" class="w-10 h-10 bg-blue-600 hover:bg-blue-500 text-white rounded-xl flex items-center justify-center shadow-lg transition-all">
                                 <i class="fas fa-arrow-right"></i>
                             </button>
@@ -448,7 +510,7 @@
 
                     <!-- Mini disclaimer -->
                     <p class="text-center text-[10px] text-gray-600 mt-2 flex items-center justify-center gap-1">
-                        <i class="fas fa-info-circle"></i> Answers are synthesized via Puter Cloud. Please verify crucial details manually.
+                        <i class="fas fa-info-circle"></i> Answers are synthesized via Puter Cloud & Gemini Voice. Please verify crucial details.
                     </p>
                 </div>
             </div>
@@ -461,6 +523,12 @@
         let currentThread = [];
         let searchHistory = [];
         let puterUser = null;
+        
+        // Voice State Variables
+        let recognition = null;
+        let isListening = false;
+        let activeAudioElement = null;
+        let currentlySynthesizingId = null;
 
         // Init routine on load
         window.onload = async function() {
@@ -486,7 +554,267 @@
                     }
                 }
             }
+
+            // Initialize Web Speech API for Recognition (Microphone)
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = function() {
+                    isListening = true;
+                    document.getElementById('voice-dictation-overlay').classList.remove('hidden');
+                    document.getElementById('mic-btn').classList.add('text-blue-500');
+                    document.getElementById('dictation-temp-text').textContent = "Listening...";
+                };
+
+                recognition.onresult = function(event) {
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+
+                    for (let i = event.resultNo; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+
+                    const shownText = finalTranscript || interimTranscript;
+                    document.getElementById('dictation-temp-text').textContent = shownText;
+                    document.getElementById('prompt-input').value = shownText;
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error', event.error);
+                    stopSpeechRecognitionUI();
+                };
+
+                recognition.onend = function() {
+                    stopSpeechRecognitionUI();
+                    // Auto submit if there's any text written
+                    const promptText = document.getElementById('prompt-input').value.trim();
+                    if (promptText && isListening) {
+                        handleSearchSubmit();
+                    }
+                    isListening = false;
+                };
+            } else {
+                console.warn('Speech Recognition not supported in this browser.');
+                document.getElementById('mic-btn').style.display = 'none';
+            }
         };
+
+        // Base64 to ArrayBuffer utility
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // Writes a string into a dataview (WAV helper)
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        // Pack raw PCM Signed 16-bit audio into a WAV container
+        function pcmToWav(pcm16Array, sampleRate) {
+            const buffer = new ArrayBuffer(44 + pcm16Array.byteLength);
+            const view = new DataView(buffer);
+
+            /* RIFF identifier */
+            writeString(view, 0, 'RIFF');
+            /* file length */
+            view.setUint32(4, 36 + pcm16Array.byteLength, true);
+            /* RIFF type */
+            writeString(view, 8, 'WAVE');
+            /* format chunk identifier */
+            writeString(view, 12, 'fmt ');
+            /* format chunk length */
+            view.setUint32(16, 16, true);
+            /* sample format (raw signed PCM16 = 1) */
+            view.setUint16(20, 1, true);
+            /* channel count (mono = 1) */
+            view.setUint16(22, 1, true);
+            /* sample rate */
+            view.setUint32(24, sampleRate, true);
+            /* byte rate (sample rate * block align) */
+            view.setUint32(28, sampleRate * 2, true);
+            /* block align (channel count * bytes per sample) */
+            view.setUint16(32, 2, true);
+            /* bits per sample (16) */
+            view.setUint16(34, 16, true);
+            /* data chunk identifier */
+            writeString(view, 36, 'data');
+            /* data chunk length */
+            view.setUint32(40, pcm16Array.byteLength, true);
+
+            // Copy signed 16-bit PCM buffer to the trailing wave chunk
+            const pcmDataView = new Int16Array(buffer, 44);
+            pcmDataView.set(pcm16Array);
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        // TTS Engine using Gemini API
+        async function speakAIText(text, buttonId, messageTextId) {
+            // Stop any existing playback first
+            if (activeAudioElement) {
+                activeAudioElement.pause();
+                activeAudioElement = null;
+            }
+
+            // If we clicked the same button that was already active, just toggle off
+            if (currentlySynthesizingId === buttonId) {
+                updateSpeakerButtonState(buttonId, 'idle');
+                currentlySynthesizingId = null;
+                return;
+            }
+
+            currentlySynthesizingId = buttonId;
+            updateSpeakerButtonState(buttonId, 'loading');
+
+            const voiceName = document.getElementById('voice-select').value;
+            // Clean up text of links and markdown markers for smoother reading
+            const cleanText = text
+                .replace(/\[\d+\]/g, '') // remove citation brackets like [1]
+                .replace(/[*#`_\-]/g, '') // remove markdown styles
+                .substring(0, 400); // limit to a reasonable paragraph size for TTS
+
+            try {
+                const payload = {
+                    contents: [{
+                        parts: [{ text: "Say naturally: " + cleanText }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: voiceName }
+                            }
+                        }
+                    },
+                    model: "gemini-2.5-flash-preview-tts"
+                };
+
+                const apiKey = ""; // Left empty as requested to allow dynamic runtime injection
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                    const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                    const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+                    
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    
+                    const audioObj = new Audio(audioUrl);
+                    activeAudioElement = audioObj;
+
+                    audioObj.onplay = () => {
+                        updateSpeakerButtonState(buttonId, 'playing');
+                    };
+
+                    audioObj.onended = () => {
+                        updateSpeakerButtonState(buttonId, 'idle');
+                        currentlySynthesizingId = null;
+                    };
+
+                    await audioObj.play();
+                } else {
+                    throw new Error("Unable to synthesize premium voice stream.");
+                }
+
+            } catch (err) {
+                console.warn('Gemini Voice failed, falling back to browser SpeechSynthesis', err);
+                
+                // Native Web Speech Synthesis fallback
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.onstart = () => {
+                        updateSpeakerButtonState(buttonId, 'playing');
+                    };
+                    utterance.onend = () => {
+                        updateSpeakerButtonState(buttonId, 'idle');
+                        currentlySynthesizingId = null;
+                    };
+                    utterance.onerror = () => {
+                        updateSpeakerButtonState(buttonId, 'idle');
+                        currentlySynthesizingId = null;
+                    };
+                    
+                    window.speechSynthesis.cancel();
+                    window.speechSynthesis.speak(utterance);
+                    
+                    // Simple object matching structure to align stop functionality
+                    activeAudioElement = {
+                        pause: () => window.speechSynthesis.cancel()
+                    };
+                } else {
+                    updateSpeakerButtonState(buttonId, 'idle');
+                    currentlySynthesizingId = null;
+                }
+            }
+        }
+
+        function updateSpeakerButtonState(btnId, state) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+
+            if (state === 'loading') {
+                btn.innerHTML = `<i class="fas fa-spinner animate-spin text-blue-400"></i>`;
+                btn.title = "Synthesizing...";
+            } else if (state === 'playing') {
+                btn.innerHTML = `<i class="fas fa-stop-circle text-red-500 animate-pulse"></i>`;
+                btn.title = "Stop Reading";
+            } else {
+                btn.innerHTML = `<i class="fas fa-volume-up text-gray-400 hover:text-blue-400"></i>`;
+                btn.title = "Listen to answer";
+            }
+        }
+
+        // Dictation Toggle helper
+        function toggleSpeechRecognition() {
+            if (!recognition) return;
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        function cancelSpeechRecognition() {
+            if (recognition) {
+                isListening = false;
+                recognition.abort();
+                stopSpeechRecognitionUI();
+            }
+        }
+
+        function stopSpeechRecognitionUI() {
+            document.getElementById('voice-dictation-overlay').classList.add('hidden');
+            document.getElementById('mic-btn').classList.remove('text-blue-500');
+        }
 
         // Transition logic
         function transitionToChat() {
@@ -530,6 +858,10 @@
         function backToLanding() {
             document.getElementById('chat-view').classList.add('hidden');
             document.getElementById('landing-view').classList.remove('hidden');
+            if (activeAudioElement) {
+                activeAudioElement.pause();
+                activeAudioElement = null;
+            }
         }
 
         function updateProfileUI() {
@@ -555,6 +887,10 @@
             document.getElementById('thread-discussion-container').classList.add('hidden');
             document.getElementById('thread-discussion-container').innerHTML = '';
             document.getElementById('prompt-input').value = '';
+            if (activeAudioElement) {
+                activeAudioElement.pause();
+                activeAudioElement = null;
+            }
         }
 
         function setPromptAndSubmit(promptText) {
@@ -649,8 +985,14 @@
 
                     <!-- Main Answer Frame -->
                     <div class="space-y-3">
-                        <div class="flex items-center gap-2 text-xs text-gray-500 font-bold uppercase tracking-wider">
-                            <i class="fas fa-star text-yellow-400"></i> Answer
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2 text-xs text-gray-500 font-bold uppercase tracking-wider">
+                                <i class="fas fa-star text-yellow-400"></i> Answer
+                            </div>
+                            <!-- Dynamic Speak Output Trigger -->
+                            <button id="${interactionId}-voice-btn" class="w-8 h-8 rounded-lg glass flex items-center justify-center hover:bg-white/10 transition" title="Listen to answer">
+                                <i class="fas fa-volume-up text-gray-400 hover:text-blue-400"></i>
+                            </button>
                         </div>
                         <div class="text-gray-300 leading-relaxed text-sm md:text-md border border-white/5 bg-white/[0.01] p-5 rounded-2xl whitespace-pre-line prose prose-invert max-w-none" id="${interactionId}-text">
                             <span class="searching-loader flex items-center gap-2 text-gray-500">
@@ -695,6 +1037,10 @@
                 // Get result text
                 const finalAnswer = response.message.content || response;
                 answerElement.textContent = finalAnswer;
+
+                // Configure voice speech trigger with newly generated answer
+                const voiceBtn = document.getElementById(`${interactionId}-voice-btn`);
+                voiceBtn.onclick = () => speakAIText(finalAnswer, `${interactionId}-voice-btn`, `${interactionId}-text`);
 
                 // Push to thread
                 currentThread.push({ role: "assistant", content: finalAnswer });
