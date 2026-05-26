@@ -45,7 +45,7 @@
         }
 
         .hero-glow {
-            background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.12) 0%, rgba(3, 7, 18, 0) 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
         }
 
         .btn-primary {
@@ -129,13 +129,13 @@
                         <a href="#honesty" class="text-gray-400 hover:text-white transition-colors">Honesty</a>
                         <a href="#origin" class="text-gray-400 hover:text-white transition-colors">Our Name</a>
                         <a href="#faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a>
-                        <button onclick="transitionToChat()" class="px-6 py-2.5 rounded-full btn-primary text-sm font-semibold shadow-lg">
+                        <button onclick="transitionToChat()" class="tap-target px-6 py-2.5 rounded-full btn-primary text-sm font-semibold shadow-lg">
                            Start Chatting
                         </button>
                     </div>
 
                     <div class="md:hidden">
-                        <button onclick="transitionToChat()" class="px-4 py-2 rounded-full btn-primary text-xs font-bold shadow-md">
+                        <button onclick="transitionToChat()" class="tap-target px-4 py-2 rounded-full btn-primary text-xs font-bold shadow-md">
                            Chat
                         </button>
                     </div>
@@ -162,10 +162,10 @@
                     DohlGPT is an evolving educational tool. We believe in total honesty: about the facts we provide, how we protect your data, and where we are in our development journey. Now equipped with advanced voice intelligence!
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-6">
-                    <button onclick="transitionToChat()" class="btn-primary px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center transition-all">
+                    <button onclick="transitionToChat()" class="tap-target btn-primary px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center transition-all">
                        <i class="fas fa-search mr-3"></i> Start Searching (Puter AI)
                     </button>
-                    <a href="#origin" class="px-10 py-5 rounded-2xl font-bold text-lg bg-white/5 hover:bg-white/10 transition border border-white/10 flex items-center justify-center">
+                    <a href="#origin" class="tap-target px-10 py-5 rounded-2xl font-bold text-lg bg-white/5 hover:bg-white/10 transition border border-white/10 flex items-center justify-center">
                         The Dohl Origin
                     </a>
                 </div>
@@ -328,7 +328,7 @@
                 </div>
             </div>
 
-            <button onclick="handlePuterLogin()" class="w-full btn-primary py-3.5 rounded-xl font-bold text-md flex items-center justify-center gap-2">
+            <button onclick="handlePuterLogin()" class="tap-target w-full btn-primary py-3.5 rounded-xl font-bold text-md flex items-center justify-center gap-2">
                 <i class="fab fa-cloudversify"></i> Connect with Puter
             </button>
         </div>
@@ -338,8 +338,13 @@
     <!-- CHAT INTERFACE CONTAINER (PERPLEXITY STYLE) -->
     <div id="chat-view" class="hidden flex-grow flex flex-col md:flex-row h-screen overflow-hidden bg-[#070a13]">
         
+        <!-- Toggle button for mobile to show/hide sidebar config -->
+        <button onclick="toggleMobileSidebar()" class="md:hidden fixed top-4 right-4 z-50 bg-[#0a0f1d] border border-white/10 text-white rounded-xl p-3 shadow-lg flex items-center justify-center">
+            <i class="fas fa-cog"></i>
+        </button>
+
         <!-- Sidebar Panel -->
-        <aside class="w-full md:w-64 bg-[#0a0f1d] border-b md:border-b-0 md:border-r border-white/5 flex flex-col justify-between shrink-0">
+        <aside id="app-sidebar" class="hidden md:flex w-full md:w-64 bg-[#0a0f1d] border-b md:border-b-0 md:border-r border-white/5 flex-col justify-between shrink-0 z-40 fixed md:static inset-0 h-screen md:h-auto overflow-y-auto">
             <div>
                 <!-- Brand Header -->
                 <div class="p-4 flex items-center justify-between border-b border-white/5">
@@ -356,13 +361,13 @@
 
                 <!-- Create Thread -->
                 <div class="p-3">
-                    <button onclick="startNewThread()" class="w-full bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 py-2.5 px-4 rounded-xl font-semibold text-sm text-blue-400 flex items-center justify-center gap-2 transition-all">
+                    <button onclick="startNewThread(); hideMobileSidebar();" class="tap-target w-full bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 py-2.5 px-4 rounded-xl font-semibold text-sm text-blue-400 flex items-center justify-center gap-2 transition-all">
                         <i class="fas fa-plus text-xs"></i> New Search
                     </button>
                 </div>
 
                 <!-- Thread History -->
-                <div class="px-3 py-2 flex flex-col gap-1 overflow-y-auto max-h-[40vh]" id="history-container">
+                <div class="px-3 py-2 flex flex-col gap-1 overflow-y-auto max-h-[30vh]" id="history-container">
                     <span class="text-xs text-gray-500 uppercase font-semibold px-2 mb-2 tracking-wider">History</span>
                     <!-- Dynamic updates inject here -->
                 </div>
@@ -370,6 +375,11 @@
 
             <!-- Profile Info & Models -->
             <div class="p-4 border-t border-white/5 bg-[#080d19] space-y-4">
+                <!-- Close menu button for mobile only -->
+                <button onclick="hideMobileSidebar()" class="md:hidden w-full bg-white/5 py-2 rounded-xl text-xs font-semibold text-gray-400">
+                    <i class="fas fa-times mr-1"></i> Close Settings
+                </button>
+
                 <!-- Voice Speaker Settings -->
                 <div>
                     <label class="text-[10px] text-gray-500 font-bold block mb-1 uppercase tracking-wider">
@@ -399,8 +409,8 @@
 
                 <!-- Account Info -->
                 <div class="flex items-center justify-between pt-2 border-t border-white/5" id="user-profile-info">
-                    <div class="flex items-center gap-2 overflow-hidden">
-                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs" id="avatar-fallback">
+                    <div class="flex items-center gap-2 overflow-hidden w-2/3">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs shrink-0" id="avatar-fallback">
                             U
                         </div>
                         <div class="truncate">
@@ -408,7 +418,7 @@
                             <p class="text-[10px] text-green-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Linked</p>
                         </div>
                     </div>
-                    <button onclick="handleSignOut()" class="text-gray-400 hover:text-red-400 transition ml-2" title="Disconnect Account">
+                    <button onclick="handleSignOut()" class="text-gray-400 hover:text-red-400 transition ml-2 shadow-sm" title="Disconnect Account">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
@@ -416,7 +426,7 @@
         </aside>
 
         <!-- Chat Area -->
-        <main class="flex-grow flex flex-col justify-between overflow-hidden relative">
+        <main class="flex-grow flex flex-col justify-between overflow-hidden relative w-full">
             
             <!-- Dynamic Result Screen -->
             <div class="flex-grow overflow-y-auto p-4 md:p-8 space-y-8" id="chat-scroll-container">
@@ -430,19 +440,19 @@
 
                     <!-- Visual Quick Prompts -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                        <button onclick="setPromptAndSubmit('Explain Quantum Computing simply')" class="p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
+                        <button onclick="setPromptAndSubmit('Explain Quantum Computing simply')" class="tap-target p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
                             <h4 class="font-semibold text-sm group-hover:text-blue-400 transition">Quantum Computing</h4>
                             <p class="text-xs text-gray-500 mt-1">Breaks complex physics into clear concepts.</p>
                         </button>
-                        <button onclick="setPromptAndSubmit('Why is the sky blue? Explain Rayleigh scattering')" class="p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
+                        <button onclick="setPromptAndSubmit('Why is the sky blue? Explain Rayleigh scattering')" class="tap-target p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
                             <h4 class="font-semibold text-sm group-hover:text-blue-400 transition">Rayleigh Scattering</h4>
                             <p class="text-xs text-gray-500 mt-1">Explains why lights bend and look beautiful.</p>
                         </button>
-                        <button onclick="setPromptAndSubmit('Suggest healthy habits for a student during exam week')" class="p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
+                        <button onclick="setPromptAndSubmit('Suggest healthy habits for a student during exam week')" class="tap-target p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
                             <h4 class="font-semibold text-sm group-hover:text-blue-400 transition">Student Habits</h4>
                             <p class="text-xs text-gray-500 mt-1">Study tips, sleep balance, and clear schedules.</p>
                         </button>
-                        <button onclick="setPromptAndSubmit('Write a quick interactive game in python')" class="p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
+                        <button onclick="setPromptAndSubmit('Write a quick interactive game in python')" class="tap-target p-4 rounded-2xl glass text-left hover:bg-white/5 border border-white/5 transition-all group">
                             <h4 class="font-semibold text-sm group-hover:text-blue-400 transition">Python Game Build</h4>
                             <p class="text-xs text-gray-500 mt-1">Step-by-step game scripts with clear code logic.</p>
                         </button>
@@ -450,7 +460,7 @@
                 </div>
 
                 <!-- ACTIVE DISCUSSION STREAM -->
-                <div id="thread-discussion-container" class="max-w-3xl mx-auto space-y-12 hidden">
+                <div id="thread-discussion-container" class="max-w-3xl mx-auto space-y-12 hidden pb-12">
                     <!-- Dynamic discussion rounds get inserted here -->
                 </div>
 
@@ -467,7 +477,7 @@
                 </div>
                 <p class="text-sm font-semibold text-blue-400">Dohl is listening to you...</p>
                 <p id="dictation-temp-text" class="text-xs text-gray-400 italic">Speak now</p>
-                <button onclick="cancelSpeechRecognition()" class="px-3 py-1 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-[10px] rounded-lg border border-red-500/30 font-bold uppercase tracking-wider">
+                <button onclick="cancelSpeechRecognition()" class="tap-target px-3 py-1 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-[10px] rounded-lg border border-red-500/30 font-bold uppercase tracking-wider">
                     Stop
                 </button>
             </div>
@@ -498,11 +508,11 @@
                         <!-- Submit & Action Buttons -->
                         <div class="flex items-center justify-end gap-2 shrink-0 px-2">
                             <!-- Voice Mic Button -->
-                            <button id="mic-btn" onclick="toggleSpeechRecognition()" class="w-10 h-10 hover:bg-white/5 text-gray-400 hover:text-blue-400 rounded-xl flex items-center justify-center transition-all relative" title="Speak to DohlGPT">
+                            <button id="mic-btn" onclick="toggleSpeechRecognition()" class="tap-target w-10 h-10 hover:bg-white/5 text-gray-400 hover:text-blue-400 rounded-xl flex items-center justify-center transition-all relative" title="Speak to DohlGPT">
                                 <i class="fas fa-microphone"></i>
                             </button>
 
-                            <button onclick="handleSearchSubmit()" class="w-10 h-10 bg-blue-600 hover:bg-blue-500 text-white rounded-xl flex items-center justify-center shadow-lg transition-all">
+                            <button onclick="handleSearchSubmit()" class="tap-target w-10 h-10 bg-blue-600 hover:bg-blue-500 text-white rounded-xl flex items-center justify-center shadow-lg transition-all">
                                 <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
@@ -555,54 +565,70 @@
                 }
             }
 
-            // Initialize Web Speech API for Recognition (Microphone)
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (SpeechRecognition) {
-                recognition = new SpeechRecognition();
-                recognition.continuous = false;
-                recognition.interimResults = true;
-                recognition.lang = 'en-US';
+            // Initialize Web Speech API for Recognition (Microphone) with robust error and indexing handlers
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (SpeechRecognition) {
+                    recognition = new SpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
 
-                recognition.onstart = function() {
-                    isListening = true;
-                    document.getElementById('voice-dictation-overlay').classList.remove('hidden');
-                    document.getElementById('mic-btn').classList.add('text-blue-500');
-                    document.getElementById('dictation-temp-text').textContent = "Listening...";
-                };
+                    recognition.onstart = function() {
+                        isListening = true;
+                        
+                        // Stop any text synthesis so speech doesn't trigger feedback
+                        stopOngoingSpeech();
 
-                recognition.onresult = function(event) {
-                    let interimTranscript = '';
-                    let finalTranscript = '';
+                        document.getElementById('voice-dictation-overlay').classList.remove('hidden');
+                        document.getElementById('mic-btn').classList.add('text-blue-500');
+                        document.getElementById('dictation-temp-text').textContent = "Listening...";
+                    };
 
-                    for (let i = event.resultNo; i < event.results.length; ++i) {
-                        if (event.results[i].isFinal) {
-                            finalTranscript += event.results[i][0].transcript;
-                        } else {
-                            interimTranscript += event.results[i][0].transcript;
+                    recognition.onresult = function(event) {
+                        let interimTranscript = '';
+                        let finalTranscript = '';
+
+                        // CORRECTED: Fixed the event indexing to use event.resultIndex instead of undefined resultNo
+                        for (let i = event.resultIndex; i < event.results.length; ++i) {
+                            if (event.results[i].isFinal) {
+                                finalTranscript += event.results[i][0].transcript;
+                            } else {
+                                interimTranscript += event.results[i][0].transcript;
+                            }
                         }
-                    }
 
-                    const shownText = finalTranscript || interimTranscript;
-                    document.getElementById('dictation-temp-text').textContent = shownText;
-                    document.getElementById('prompt-input').value = shownText;
-                };
+                        const shownText = finalTranscript || interimTranscript;
+                        if (shownText) {
+                            document.getElementById('dictation-temp-text').textContent = shownText;
+                            document.getElementById('prompt-input').value = shownText;
+                        }
+                    };
 
-                recognition.onerror = function(event) {
-                    console.error('Speech recognition error', event.error);
-                    stopSpeechRecognitionUI();
-                };
+                    recognition.onerror = function(event) {
+                        if (event.error === 'aborted' || event.error === 'no-speech') {
+                            return;
+                        }
+                        console.warn('Speech recognition aborted or failed:', event.error);
+                        stopSpeechRecognitionUI();
+                    };
 
-                recognition.onend = function() {
-                    stopSpeechRecognitionUI();
-                    // Auto submit if there's any text written
-                    const promptText = document.getElementById('prompt-input').value.trim();
-                    if (promptText && isListening) {
-                        handleSearchSubmit();
-                    }
-                    isListening = false;
-                };
-            } else {
-                console.warn('Speech Recognition not supported in this browser.');
+                    recognition.onend = function() {
+                        const triggerSubmit = isListening;
+                        stopSpeechRecognitionUI();
+                        
+                        // Auto submit if there's any text written and speech finished naturally
+                        const promptText = document.getElementById('prompt-input').value.trim();
+                        if (promptText && triggerSubmit) {
+                            handleSearchSubmit();
+                        }
+                        isListening = false;
+                    };
+                } else {
+                    document.getElementById('mic-btn').style.display = 'none';
+                }
+            } catch (speechInitErr) {
+                console.warn('Could not initialize microphone access layers.', speechInitErr);
                 document.getElementById('mic-btn').style.display = 'none';
             }
         };
@@ -667,10 +693,7 @@
         // TTS Engine using Gemini API
         async function speakAIText(text, buttonId, messageTextId) {
             // Stop any existing playback first
-            if (activeAudioElement) {
-                activeAudioElement.pause();
-                activeAudioElement = null;
-            }
+            stopOngoingSpeech();
 
             // If we clicked the same button that was already active, just toggle off
             if (currentlySynthesizingId === buttonId) {
@@ -705,7 +728,7 @@
                     model: "gemini-2.5-flash-preview-tts"
                 };
 
-                const apiKey = ""; // Left empty as requested to allow dynamic runtime injection
+                const apiKey = ""; // Left empty to allow dynamic runtime config injection
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -777,6 +800,24 @@
             }
         }
 
+        // Stops any ongoing voice output instantly
+        function stopOngoingSpeech() {
+            if (activeAudioElement) {
+                try {
+                    activeAudioElement.pause();
+                } catch(e){}
+                activeAudioElement = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            // Reset speaker button states if active
+            if (currentlySynthesizingId) {
+                updateSpeakerButtonState(currentlySynthesizingId, 'idle');
+                currentlySynthesizingId = null;
+            }
+        }
+
         function updateSpeakerButtonState(btnId, state) {
             const btn = document.getElementById(btnId);
             if (!btn) return;
@@ -796,17 +837,24 @@
         // Dictation Toggle helper
         function toggleSpeechRecognition() {
             if (!recognition) return;
-            if (isListening) {
-                recognition.stop();
-            } else {
-                recognition.start();
+            try {
+                if (isListening) {
+                    isListening = false; // flag false to avoid auto submitting canceled words
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            } catch (micToggleErr) {
+                console.warn("Unable to toggle SpeechRecognition instances.", micToggleErr);
             }
         }
 
         function cancelSpeechRecognition() {
             if (recognition) {
                 isListening = false;
-                recognition.abort();
+                try {
+                    recognition.abort();
+                } catch(e){}
                 stopSpeechRecognitionUI();
             }
         }
@@ -814,6 +862,23 @@
         function stopSpeechRecognitionUI() {
             document.getElementById('voice-dictation-overlay').classList.add('hidden');
             document.getElementById('mic-btn').classList.remove('text-blue-500');
+        }
+
+        // Sidebar drawer toggles on mobile
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('app-sidebar');
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
+            } else {
+                hideMobileSidebar();
+            }
+        }
+
+        function hideMobileSidebar() {
+            const sidebar = document.getElementById('app-sidebar');
+            sidebar.classList.add('hidden');
+            sidebar.classList.remove('flex');
         }
 
         // Transition logic
@@ -858,10 +923,7 @@
         function backToLanding() {
             document.getElementById('chat-view').classList.add('hidden');
             document.getElementById('landing-view').classList.remove('hidden');
-            if (activeAudioElement) {
-                activeAudioElement.pause();
-                activeAudioElement = null;
-            }
+            stopOngoingSpeech();
         }
 
         function updateProfileUI() {
@@ -887,10 +949,7 @@
             document.getElementById('thread-discussion-container').classList.add('hidden');
             document.getElementById('thread-discussion-container').innerHTML = '';
             document.getElementById('prompt-input').value = '';
-            if (activeAudioElement) {
-                activeAudioElement.pause();
-                activeAudioElement = null;
-            }
+            stopOngoingSpeech();
         }
 
         function setPromptAndSubmit(promptText) {
@@ -933,10 +992,13 @@
             if (!query) return;
 
             // Make sure authenticated
-            if (typeof puter === 'undefined' || !puter.auth.isSignedIn()) {
+            if (typeof puter !== 'undefined' && !puter.auth.isSignedIn()) {
                 document.getElementById('auth-modal').classList.remove('hidden');
                 return;
             }
+
+            // Hide mobile sidebar if open
+            hideMobileSidebar();
 
             // UI Transitions
             document.getElementById('welcome-prompt-screen').classList.add('hidden');
@@ -963,7 +1025,7 @@
             // Render searching phase skeleton
             const citations = buildDynamicCitations(query);
             const citationCards = citations.map(cit => `
-                <a href="${cit.url}" target="_blank" class="glass p-3 rounded-xl hover:bg-white/10 border border-white/5 flex flex-col justify-between h-20 w-44 shrink-0 transition text-left">
+                <a href="${cit.url}" target="_blank" class="tap-target glass p-3 rounded-xl hover:bg-white/10 border border-white/5 flex flex-col justify-between h-20 w-44 shrink-0 transition text-left">
                     <span class="text-xs font-bold text-gray-200 line-clamp-2 leading-snug">${cit.title}</span>
                     <span class="text-[10px] text-gray-500 flex items-center gap-1 mt-1 truncate">
                         <i class="${cit.icon} text-xs"></i> ${cit.site}
@@ -990,7 +1052,7 @@
                                 <i class="fas fa-star text-yellow-400"></i> Answer
                             </div>
                             <!-- Dynamic Speak Output Trigger -->
-                            <button id="${interactionId}-voice-btn" class="w-8 h-8 rounded-lg glass flex items-center justify-center hover:bg-white/10 transition" title="Listen to answer">
+                            <button id="${interactionId}-voice-btn" class="tap-target w-8 h-8 rounded-lg glass flex items-center justify-center hover:bg-white/10 transition" title="Listen to answer">
                                 <i class="fas fa-volume-up text-gray-400 hover:text-blue-400"></i>
                             </button>
                         </div>
@@ -1081,7 +1143,7 @@
                     </div>
                     <div class="flex flex-wrap gap-2">
                         ${topics.map(t => `
-                            <button onclick="setPromptAndSubmit('${escapeHtml(t)}')" class="text-xs bg-white/5 hover:bg-white/10 border border-white/5 text-gray-300 py-1.5 px-3 rounded-full transition-all">
+                            <button onclick="setPromptAndSubmit('${escapeHtml(t)}')" class="tap-target text-xs bg-white/5 hover:bg-white/10 border border-white/5 text-gray-300 py-1.5 px-3 rounded-full transition-all">
                                 ${escapeHtml(t)} <i class="fas fa-arrow-right text-[10px] ml-1 opacity-60"></i>
                             </button>
                         `).join('')}
@@ -1130,7 +1192,7 @@
 
             searchHistory.forEach(item => {
                 const itemHtml = `
-                    <button onclick="setPromptAndSubmit('${escapeHtml(item.text)}')" class="w-full text-left truncate px-2 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white hover:bg-white/5 transition flex items-center gap-2">
+                    <button onclick="setPromptAndSubmit('${escapeHtml(item.text)}')" class="tap-target w-full text-left truncate px-2 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white hover:bg-white/5 transition flex items-center gap-2">
                         <i class="far fa-comment text-[10px] text-gray-600"></i>
                         <span class="truncate">${escapeHtml(item.text)}</span>
                     </button>
